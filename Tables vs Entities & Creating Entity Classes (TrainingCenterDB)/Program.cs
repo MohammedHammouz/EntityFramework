@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Tables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_
 {
     internal class Program
@@ -35,6 +36,10 @@ namespace Tables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_
             Console.WriteLine("================================================");
             PrintAndRetrieveData(context);
             GetActiveStudents(context);
+            Example_First(context);
+            Example_First(context);
+            Example_Single(context);
+            Example_SingleOrDefault(context);
         }
         public static void PrintAndRetrieveData(AppDBContext context)
         {
@@ -94,11 +99,109 @@ namespace Tables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_
             Console.WriteLine($"Total Active Students: {students.Count}");
 
         }
+        public static void Example_First(AppDBContext context)
+        {
+            Console.WriteLine("\nExample 1 - First()");
+            Console.WriteLine("-------------------");
+            // Build query first(no execution yet)
+            var query = context.Students
+                .Where(s => s.Status == "Active")
+                .OrderBy(s => s.StudentID);
+            // Preview query shape
+            PreviewSQLUsingToQueryString(query.ToQueryString());
+
+            // Execute query
+            // Runtime logging will show the actual executed SQL.
+            var student = query.First();
+            Console.WriteLine("\nFirst Active Student:");
+            Console.WriteLine($"{student.StudentID} - {student.FirstName} {student.LastName}");
+            
+        }
+            /// <summary>
+            /// FirstOrDefault() returns the first matching row,
+            /// or null if no row exists.
+            /// </summary>
+            public static void Example_FirstOrDefault(AppDBContext context)
+            {
+            Console.WriteLine("\nExample 2 - FirstOrDefault()");
+            Console.WriteLine("----------------------------");
+
+            // Build query first (no execution yet)
+            var query = context.Students
+                .Where(s => s.Email == "notfound@student.com");
+            // Execute query
+            // Runtime logging will show the actual executed SQL.
+            var student = query.FirstOrDefault();
+
+            if (student == null)
+            {
+                Console.WriteLine("\nNo student found.");
+            }
+            else
+            {
+                Console.WriteLine("\nStudent Found:");
+                Console.WriteLine($"{student.StudentID} - {student.FirstName} {student.LastName}");
+            }
+        }
+       public static void Example_Single(AppDBContext context)
+        {
+            Console.WriteLine("\nExample 3 - Single()");
+            Console.WriteLine("--------------------");
+
+            // Build query first (no execution yet)
+            var query = context.Courses
+                .Where(c => c.Code == "SQL-101");
+            // Preview query shape
+            PreviewSQLUsingToQueryString(query.ToQueryString());
+
+            // Execute query
+            // Runtime logging will show the actual executed SQL.
+            var course = query.Single();
+            Console.WriteLine("\nCourse Found:");
+            Console.WriteLine($"{course.CourseId} - {course.Code} - {course.Title}");
+        }
+        /// <summary>
+        /// SingleOrDefault() expects zero or one matching row.
+        /// Returns null if none exists, but throws if duplicates exist.
+        /// </summary>
+        public static void Example_SingleOrDefault(AppDBContext context)
+        {
+            Console.WriteLine("\nExample 4 - SingleOrDefault()");
+            Console.WriteLine("-----------------------------");
+
+            // Build query first (no execution yet)
+            var query = context.Courses
+                .Where(c => c.Code == "UNKNOWN-999");
+
+            // Preview query shape
+            PreviewSQLUsingToQueryString(query.ToQueryString());
+
+            // Execute query
+            // Runtime logging will show the actual executed SQL.
+            var course = query.SingleOrDefault();
+
+            if (course == null)
+            {
+                Console.WriteLine("\nNo course found.");
+            }
+            else
+            {
+                Console.WriteLine("\nCourse Found:");
+                Console.WriteLine($"{course.CourseId} - {course.Code} - {course.Title}");
+            }
+        }
         public static void PrintGeneratedSql(string tableName,string sqlQuery)
         {
             Console.WriteLine($"Generated SQL Query for {tableName}:");
             Console.WriteLine(new string('-', 40));
             Console.WriteLine(sqlQuery);
+            Console.WriteLine();
+        }
+        static void PreviewSQLUsingToQueryString(string SQLString)
+        {
+            Console.WriteLine("\nPreview SQL using ToQueryString():");
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine(SQLString);
             Console.WriteLine();
         }
     }
