@@ -72,6 +72,9 @@ namespace ables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_.Data
             // ==================================================
             modelBuilder.Entity<Course>(entity =>
             {
+
+
+                entity.HasKey(e => e.CourseId);
                 // Create index on InstructorId
                 // Speeds searching courses by instructor
                 entity.HasIndex(e => e.InstructorId, "IX_Courses_InstructorId");
@@ -138,6 +141,7 @@ namespace ables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_.Data
             });
             modelBuilder.Entity<Enrollment>(entity =>
             {
+                entity.HasKey(e => e.EnrollmentId);
                 entity.HasIndex(e => e.CourseId, "IX_Enrollments_CourseId");
                 entity.HasIndex(e => e.Status, "IX_Enrollments_Status");
                 entity.HasIndex(e => e.StudentId, "IX_Enrollments_StudentId");
@@ -158,8 +162,10 @@ namespace ables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_.Data
             });
             modelBuilder.Entity<Instructor>(entity =>
             {
+                entity.HasKey(e => e.InstructorID);
                 entity.HasIndex(e => e.ManagerID, "IX_Instructors_ManagerId");
                 entity.HasIndex(e => e.Email, "UQ_Instructors_Email").IsUnique();
+                //entity.HasKey(e=>e.)
                 entity.Property(e => e.FirstName).HasMaxLength(50);
                 entity.Property(e => e.LastName).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(150);
@@ -173,6 +179,7 @@ namespace ables_vs_Entities___Creating_Entity_Classes__TrainingCenterDB_.Data
             });
             modelBuilder.Entity<Student>(entity =>
             {
+                entity.HasKey(e => e.StudentID);
                 entity.HasIndex(e => e.Status, "IX_Students_Status");
 
 
